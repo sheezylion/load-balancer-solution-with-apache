@@ -1,17 +1,14 @@
 # Load Balancer Solution With Apache
 A Load Balancer (LB) distributes clients' requests among underlying Web Servers and makes sure that the load is distributed in an optimal way.
 
-The diagrame below shows the architecture of the solution
+The diagram below shows the architecture of the solution
 
 <img width="600" alt="architecture-diag" src="https://github.com/sheezylion/load-balancer-solution-with-apache/assets/142250556/907f45e3-1f07-4a84-8884-6d16d7368df6">
 
-Demonstration of how to enhance the website solution that we implemented on project: 
-"devops-tooling-website-solution" by adding a load balancer to distribute traffic between 2 web servers. 
-We will also use a load balancer so that users can access our website by using a single URL.
 
 This project is a continuation of project: "https://github.com/sheezylion/Devops-tooling-website-solution"
 
-We will continue using "devops-tooling-website-solution" EC2 instances to complete this project.
+We will continue using "devops-tooling-website-solution" EC2 instances to complete this project, but instead of 3 webservers we are working with 2 webservers, follow the git repo from above, configure all necessary requirements to follow along.
 
 ### Prerequisites
 Ensure that the following servers are installedd and configure already.
