@@ -74,28 +74,125 @@ NOTE: We used 3 web servers on project: "devops-tooling-website-solution". Howev
 
 Result:
 
-<img width="1662" alt="Screenshot 2024-06-13 at 17 23 25" src="https://github.com/sheezylion/load-balancer-solution-with-apache/assets/142250556/c90eefea-f9ad-4a1f-98dd-6240c2123f77">
+<img width="1670" alt="Screenshot 2024-06-13 at 17 30 47" src="https://github.com/sheezylion/load-balancer-solution-with-apache/assets/142250556/9465d0fb-5828-4f13-a56f-f901380cae72">
 
-2. Open TCP port 80 on Project-8-apache-lb by creating an Inbounb Rule in Security Group
+
+2. Open TCP port 80 on Project-8-apache-lb by creating an Inbound Rule in Security Group
 
 Result:
 
-<img width="1650" alt="Screenshot 2024-06-13 at 17 24 58" src="https://github.com/sheezylion/load-balancer-solution-with-apache/assets/142250556/b19452fc-5e1a-41b6-9827-76bc9bfcfb4f">
+<img width="1635" alt="Screenshot 2024-06-13 at 17 31 28" src="https://github.com/sheezylion/load-balancer-solution-with-apache/assets/142250556/1dfdccb2-5695-4b93-9275-cc775ed29576">
 
-3. Instal Apache Load Balancer on Project-8-apache-lb and configure it to point traffic coming to LB to both Web Servers.
+3. Instal Apache Load Balancer on Project-8-apache-lb and configure it to point traffic coming to LB to both Web 
+Servers.
 
 i. Install Apache2
 
 - Access the instance
 
 ```
- ssh -i ~/Downloads/demo-pair.pem ec2-user@35.172.214.34
+ ssh -i ~/Downloads/demo-pair.pem ubuntu@34.228.142.236
 ```
 
 Result:
 
-<img width="847" alt="Screenshot 2024-06-13 at 17 26 45" src="https://github.com/sheezylion/load-balancer-solution-with-apache/assets/142250556/7fe8fdec-3eb3-4f36-bdff-6a489ff8f7e2">
+<img width="853" alt="Screenshot 2024-06-13 at 17 32 19" src="https://github.com/sheezylion/load-balancer-solution-with-apache/assets/142250556/222ea430-c5f1-4c36-a646-d1a6a08e51d5">
 
+- Update and upgrade Ubuntu
+
+```
+sudo apt update && sudo apt upgrade
+```
+
+Result:
+
+<img width="837" alt="Screenshot 2024-06-13 at 17 32 56" src="https://github.com/sheezylion/load-balancer-solution-with-apache/assets/142250556/356711fd-3d64-4374-be3a-d31ea76d85a3">
+
+- Install Apache
+
+```
+sudo apt install apache2 -y
+```
+
+Result:
+
+<img width="860" alt="Screenshot 2024-06-13 at 17 40 29" src="https://github.com/sheezylion/load-balancer-solution-with-apache/assets/142250556/264010a0-f1fc-4926-99c9-9aa24ed2ff09">
+
+```
+sudo apt-get install libxml2-dev
+```
+
+Result:
+
+<img width="843" alt="Screenshot 2024-06-13 at 17 41 24" src="https://github.com/sheezylion/load-balancer-solution-with-apache/assets/142250556/721f736b-e5c1-41cc-a509-e327ce4eb917">
+
+ii. Enable the following modules
+
+```
+sudo a2enmod rewrite
+
+sudo a2enmod  proxy
+
+sudo a2enmod  proxy_balancer
+
+sudo a2enmod  proxy_http
+
+sudo a2enmod  headers
+
+sudo a2enmod  lbmethod_bytraffic
+```
+
+Result:
+
+<img width="847" alt="Screenshot 2024-06-13 at 17 42 21" src="https://github.com/sheezylion/load-balancer-solution-with-apache/assets/142250556/d42dc8c2-5df1-4bcc-b7b4-483c1b45d034">
+
+iii. Restart Apache2 Service
+
+```
+sudo systemctl restart apache2
+sudo systemctl status apache2
+```
+
+Result:
+
+<img width="854" alt="Screenshot 2024-06-13 at 17 43 09" src="https://github.com/sheezylion/load-balancer-solution-with-apache/assets/142250556/e448bfee-3d23-45d3-aab8-8c51bc9a6f4e">
+
+
+### Configure Load Balancing
+
+i. Open the file 000-default.conf in sites-available
+
+```
+sudo vi /etc/apache2/sites-available/000-default.conf
+```
+
+ii. Add this configuration into the section <VirtualHost *:80>  </VirtualHost>
+
+```
+<Proxy “balancer://mycluster”>
+            BalancerMember http://<webserver1-private-ip-address>:80 loadfactor=5 timeout=1
+           BalancerMember http://<webserver2-private-ip-address>:80 loadfactor=5 timeout=1
+           ProxySet lbmethod=bytraffic
+           # ProxySet lbmethod=byrequests
+</Proxy>
+
+
+ProxyPreserveHost on
+ProxyPass / balancer://mycluster/
+ProxyPassReverse / balancer://mycluster/
+```
+
+Result:
+
+<img width="852" alt="Screenshot 2024-06-13 at 17 49 01" src="https://github.com/sheezylion/load-balancer-solution-with-apache/assets/142250556/99288994-fb65-4d56-be21-9de4bd7c5746">
+
+iii. Restart Apache
+
+```
+sudo systemctl restart apache2
+```
+
+Result:
 
 
 
