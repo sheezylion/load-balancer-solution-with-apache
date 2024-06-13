@@ -192,7 +192,6 @@ iii. Restart Apache
 sudo systemctl restart apache2
 ```
 
-Result:
 
 
 
