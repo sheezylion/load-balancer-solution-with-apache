@@ -73,3 +73,29 @@ NOTE: We used 3 web servers on project: "devops-tooling-website-solution". Howev
 1. Create an Ubuntu Server 24.04 EC2 instance and name it Project-8-apache-lb
 
 Result:
+
+<img width="1662" alt="Screenshot 2024-06-13 at 17 23 25" src="https://github.com/sheezylion/load-balancer-solution-with-apache/assets/142250556/c90eefea-f9ad-4a1f-98dd-6240c2123f77">
+
+2. Open TCP port 80 on Project-8-apache-lb by creating an Inbounb Rule in Security Group
+
+Result:
+
+<img width="1650" alt="Screenshot 2024-06-13 at 17 24 58" src="https://github.com/sheezylion/load-balancer-solution-with-apache/assets/142250556/b19452fc-5e1a-41b6-9827-76bc9bfcfb4f">
+
+3. Instal Apache Load Balancer on Project-8-apache-lb and configure it to point traffic coming to LB to both Web Servers.
+
+i. Install Apache2
+
+- Access the instance
+
+```
+ ssh -i ~/Downloads/demo-pair.pem ec2-user@35.172.214.34
+```
+
+Result:
+
+<img width="847" alt="Screenshot 2024-06-13 at 17 26 45" src="https://github.com/sheezylion/load-balancer-solution-with-apache/assets/142250556/7fe8fdec-3eb3-4f36-bdff-6a489ff8f7e2">
+
+
+
+
