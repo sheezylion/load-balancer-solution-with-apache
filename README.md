@@ -192,6 +192,111 @@ iii. Restart Apache
 sudo systemctl restart apache2
 ```
 
+Result:
+
+<img width="557" alt="Screenshot 2024-06-20 at 22 03 06" src="https://github.com/sheezylion/load-balancer-solution-with-apache/assets/142250556/8164a11a-c5db-4ef2-a92d-04f0902b89bf">
+
+**bytraffic** balancing method with distribute incoming load between the Web Servers according to currentraffic load. The proportion in which traffic must be distributed can be controlled bt **loadfactor** parameter.
+
+Other methods such as **bybusyness**, **byrequests**, **heartbeat** can also be adopted.
+
+### 4. Verify that the configuration works
+
+i. Access the website using the LB's Public IP address or the Public DNS name from a browser
+
+Results:
+
+<img width="1665" alt="Screenshot 2024-06-20 at 22 05 35" src="https://github.com/sheezylion/load-balancer-solution-with-apache/assets/142250556/aa85b82d-83d8-412e-9edd-7b1bce271d85">
+
+<img width="988" alt="Screenshot 2024-06-20 at 22 06 52" src="https://github.com/sheezylion/load-balancer-solution-with-apache/assets/142250556/338059fa-17ed-41de-97f3-636f45e80189">
 
 
+<img width="1680" alt="Screenshot 2024-06-20 at 22 23 21" src="https://github.com/sheezylion/load-balancer-solution-with-apache/assets/142250556/24e50f34-c102-4329-b07f-d0870b8ca966">
+
+
+
+Note: If in the previous project, /var/log/httpd was mounted from the Web Server to the NFS Server, unmount them and ensure that each Web Servers has its own log directory.
+
+ii. Unmount the NFS directory
+- Check if the Web Server's log directory is mounted to NSF
+
+```
+df -h
+sudo umount -f /var/log/httpd
+```
+
+Note: In the image below it is not mounted so we can proceed.
+
+Result:
+
+<img width="560" alt="Screenshot 2024-06-20 at 22 13 03" src="https://github.com/sheezylion/load-balancer-solution-with-apache/assets/142250556/84f58ff9-ef00-4e15-8cf5-cba27e23676a">
+
+iii. Open two ssh consoles for both Web Server and run the command:
+
+```
+sudo tail -f /var/log/httpd/access_log
+```
+
+iv. Refresh the browser page several times and ensure both Web Servers receive HTTP and GET requests. New records must apear in each web server log files. The number of request to each servers will be approximately the same since loadfactor is set to the same value for both servers. This means that traffic will be evenly distributed between them.
+
+Result:
+
+<img width="1680" alt="Screenshot 2024-06-20 at 22 19 21" src="https://github.com/sheezylion/load-balancer-solution-with-apache/assets/142250556/53153382-b2d8-4816-8049-b4ffb25f64f1">
+
+
+### Optional Step - Configure Local DNS Names Resolution
+
+Sometimes it is tedious to remember and switch between IP addresses, especially if there are lots of servers to manage. It is best to configure local domain name resolution. The easiest way is use /etc/hosts file, although this approach is not very scalable, but it is very easy to configure and shows the concept well.
+
+### Configure the IP address to domain name mapping for our Load Balancer.
+
+Step 1: Open the hosts file
+
+```
+sudo vi /etc/hosts
+```
+
+Step 2: Add two records into file with Local IP address and name for the Web Servers and their private ip-address respectively
+
+Result:
+
+<img width="849" alt="Screenshot 2024-06-20 at 22 27 48" src="https://github.com/sheezylion/load-balancer-solution-with-apache/assets/142250556/c7f5eb78-68da-4053-9391-fdfb7eb22319">
+
+Step 3: Update the LB config file with those arbitrary names instead of IP addresses
+
+```
+sudo vi /etc/apache2/sites-available/000-default.conf
+```
+
+```
+BalancerMember http://Web1:80 loadfactor=5 timeout=1
+BalancerMember http://Web2:80 loadfactor=5 timeout=1
+```
+
+Result:
+
+<img width="847" alt="Screenshot 2024-06-20 at 22 29 36" src="https://github.com/sheezylion/load-balancer-solution-with-apache/assets/142250556/e10691cd-97bf-483c-afff-b4de60d2bfce">
+
+Step 4: Curl the Web Servers from LB locally
+
+```
+curl http://Web1
+```
+
+Result:
+
+<img width="849" alt="Screenshot 2024-06-20 at 22 31 10" src="https://github.com/sheezylion/load-balancer-solution-with-apache/assets/142250556/4c43a9f8-c602-40a0-8be3-164307d97d28">
+
+```
+curl http://Web2
+```
+
+Result:
+
+<img width="798" alt="Screenshot 2024-06-20 at 22 32 16" src="https://github.com/sheezylion/load-balancer-solution-with-apache/assets/142250556/3cb0628a-65ef-4dbc-aeef-4039223ce97c">
+
+Remember, This is only internal configuration and also local to the LB server, these names will neither be 'resolvable' from other servers internally nor from the Internet.
+
+### Conclusion
+The load-balancer solution with apache offers robust features for load balancing, including support for health checks, and various load balancing algorithms. Properly configuring these options ensures high availability, scalability, and reliability for web applications.
 
